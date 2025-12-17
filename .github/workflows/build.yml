@@ -17,6 +17,23 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v4
 
+    - name: Free Disk Space
+      run: |
+        sudo rm -rf /Users/runner/Library/Android/sdk
+        sudo rm -rf /Library/Google/Audio/Plug-Ins
+        sudo rm -rf /usr/local/lib/android
+        sudo rm -rf /usr/local/share/powershell
+        sudo rm -rf /usr/local/share/dotnet
+        sudo rm -rf /usr/local/lib/node_modules
+        sudo rm -rf /opt/hostedtoolcache/CodeQL
+        
+        # 删除不需要的 Xcode 版本 (保留最新的)
+        # 注意: 这可能比较激进，如果构建失败请调整
+        # sudo rm -rf /Applications/Xcode_14*.app
+        # sudo rm -rf /Applications/Xcode_15.0*.app
+        
+        df -h
+
     - uses: maxim-lobanov/setup-xcode@v1
       with:
         xcode-version: latest-stable
