@@ -57,7 +57,9 @@ jobs:
     - name: Generate Build Files
       run: |
         cd ~/chromium/src && mkdir -p out/Release-iphoneos
-        gn gen out/Release-iphoneos --args='is_debug=false target_os="ios" ios_enable_code_signing=false is_component_build=false target_environment="device" target_cpu="arm64" use_blink=true'
+        # symbol_level=0 和 blink_symbol_level=0 极大地减少了构建时间和磁盘空间
+        # use_blink=true 会编译 Blink 引擎，非常耗时。如果不需要 Blink (使用 WebKit)，请移除该参数
+        gn gen out/Release-iphoneos --args='is_debug=false target_os="ios" ios_enable_code_signing=false is_component_build=false target_environment="device" target_cpu="arm64" use_blink=true symbol_level=0 blink_symbol_level=0'
 
     - name: Build Chromium for iOS
       continue-on-error: true
