@@ -57,9 +57,11 @@ jobs:
     - name: Generate Build Files
       run: |
         cd ~/chromium/src && mkdir -p out/Release-iphoneos
-        # symbol_level=0 和 blink_symbol_level=0 极大地减少了构建时间和磁盘空间
-        # use_blink=true 会编译 Blink 引擎，非常耗时。如果不需要 Blink (使用 WebKit)，请移除该参数
-        gn gen out/Release-iphoneos --args='is_debug=false target_os="ios" ios_enable_code_signing=false is_component_build=false target_environment="device" target_cpu="arm64" use_blink=true symbol_level=0 blink_symbol_level=0'
+        # symbol_level=0: 禁用调试符号
+        # blink_symbol_level=0, v8_symbol_level=0: 针对特定模块禁用符号
+        # use_thin_lto=false: 禁用链接时优化 (LTO)，大幅减少链接时间和内存占用
+        # enable_dsyms=false: 不生成 dSYM 调试文件
+        gn gen out/Release-iphoneos --args='is_debug=false target_os="ios" ios_enable_code_signing=false is_component_build=false target_environment="device" target_cpu="arm64" use_blink=true symbol_level=0 blink_symbol_level=0 v8_symbol_level=0 use_thin_lto=false enable_dsyms=false'
 
     - name: Build Chromium for iOS
       continue-on-error: true
